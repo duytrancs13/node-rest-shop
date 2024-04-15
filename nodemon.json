@@ -1,6 +1,5 @@
 {
   "env": {
-    "PORT": 8000,
     "MONGOOSE_ATLAS_PW": "hipesoqa",
     "JWT_KEY": "secret"
   }
