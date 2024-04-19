@@ -8,14 +8,15 @@ const router = express.Router();
 const User = require("../model/user");
 
 router.post("/sign-up", (req, res, next) => {
-  
+  // check valid email
+
   User.find({ email: req.body.email })
     .exec()
     .then((user) => {
       if (user.length >= 1) {
-        return res.status(409).json({
+        return res.status(200).json({
           error_code: 409,
-          message: "Email is existed, please use other email",
+          message: "Email đã tồn tại",
           data: "",
         });
       } else {
@@ -33,7 +34,7 @@ router.post("/sign-up", (req, res, next) => {
               email: req.body.email,
               password: hash,
             });
-            
+
             user
               .save()
               .then(() => {
