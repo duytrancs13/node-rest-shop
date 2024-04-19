@@ -8,19 +8,24 @@ const router = express.Router();
 const User = require("../model/user");
 
 router.post("/sign-up", (req, res, next) => {
+  
   User.find({ email: req.body.email })
     .exec()
     .then((user) => {
       if (user.length >= 1) {
         return res.status(409).json({
-          message: "Email existed",
+          error_code: 409,
+          message: "Email is existed, please use other email",
+          data: "",
         });
       } else {
         bcrypt.hash(req.body.password, 10, (err, hash) => {
           // Store hash in your password DB.
           if (err) {
             return res.status(500).json({
-              error: err,
+              error_code: 500,
+              message: err,
+              data: "",
             });
           } else {
             const user = new User({
@@ -28,17 +33,21 @@ router.post("/sign-up", (req, res, next) => {
               email: req.body.email,
               password: hash,
             });
+            
             user
               .save()
-              .then((result) => {
-                console.log("result: ", result);
+              .then(() => {
                 return res.status(200).json({
-                  message: "User created",
+                  error_code: 0,
+                  message: "Successful",
+                  data: "",
                 });
               })
               .catch((error) => {
                 res.status(500).json({
-                  error,
+                  error_code: 500,
+                  message: error,
+                  data: "",
                 });
               });
           }
@@ -47,19 +56,18 @@ router.post("/sign-up", (req, res, next) => {
     })
     .catch((error) => {
       res.status(500).json({
-        error,
+        error_code: 500,
+        message: error,
+        data: "",
       });
     });
 });
 
-router.post("/login", (req, res, next) => {
-  console.log("----");
-
+router.post("/sign-in", (req, res, next) => {
   const body = { email: "test2@gmail.com", password: "test123" };
   User.find({ email: body.email })
     .exec()
     .then((user) => {
-      console.log("user: ", user);
       if (!user.length) {
         return res.status(401).json({
           message: "Auth failed 0",

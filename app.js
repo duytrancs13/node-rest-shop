@@ -18,11 +18,12 @@ mongoose
   .catch((error) => console.log("mongoose connected error: ", error));
 
 // body-parser
-// app.use(express.urlencoded({ extended: true }));
-// app.use(express.json())
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json())
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// version express <4.16 install bodyParser 
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   // Website you wish to allow to connect
