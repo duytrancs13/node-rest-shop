@@ -1,53 +1,54 @@
 const express = require("express");
 const mongoose = require("mongoose");
+
+// lib
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const router = express.Router();
-
+const { STATUS, MESSAGE } = require("../constant");
 const User = require("../model/user");
 
-router.post("/sign-up", (req, res, next) => {
-  // check valid email
+const router = express.Router();
 
-  User.find({ email: req.body.email })
+router.post("/sign-up", (request, response, next) => {
+  User.find({ email: request.body.email })
     .exec()
     .then((user) => {
       if (user.length >= 1) {
-        return res.status(200).json({
-          error_code: 409,
-          message: "Email đã tồn tại",
+        return response.status(STATUS.SUCCESS).json({
+          error_code: MESSAGE.EXIST_EMAIL.code,
+          message: MESSAGE.EXIST_EMAIL.message,
           data: "",
         });
       } else {
-        bcrypt.hash(req.body.password, 10, (err, hash) => {
+        bcrypt.hash(request.body.password, 10, (error, hash) => {
           // Store hash in your password DB.
-          if (err) {
-            return res.status(500).json({
-              error_code: 500,
-              message: err,
+          if (error) {
+            return response.status(STATUS.ERROR).json({
+              error_code: MESSAGE.SERVER.code,
+              message: MESSAGE.SERVER.message,
               data: "",
             });
           } else {
             const user = new User({
               _id: new mongoose.Types.ObjectId(),
-              email: req.body.email,
+              email: request.body.email,
               password: hash,
             });
 
             user
               .save()
-              .then(() => {
-                return res.status(200).json({
-                  error_code: 0,
-                  message: "Successful",
+              .then((result) => {
+                return response.status(STATUS.SUCCESS).json({
+                  error_code: MESSAGE.SUCCESS.code,
+                  message: MESSAGE.SUCCESS.message,
                   data: "",
                 });
               })
               .catch((error) => {
-                res.status(500).json({
-                  error_code: 500,
-                  message: error,
+                response.status(STATUS.ERROR).json({
+                  error_code: MESSAGE.SERVER.code,
+                  message: MESSAGE.SERVER.message,
                   data: "",
                 });
               });
@@ -56,9 +57,9 @@ router.post("/sign-up", (req, res, next) => {
       }
     })
     .catch((error) => {
-      res.status(500).json({
-        error_code: 500,
-        message: error,
+      response.status(STATUS.ERROR).json({
+        error_code: MESSAGE.SERVER.code,
+        message: MESSAGE.SERVER.message,
         data: "",
       });
     });
@@ -76,8 +77,10 @@ router.post("/sign-in", (req, res, next) => {
       }
       bcrypt.compare(body.password, user[0].password, (err, result) => {
         if (err) {
-          return res.status(401).json({
-            message: "Auth failed 1",
+          return res.status(200).json({
+            error_code: 103,
+            message: "Password không đúng",
+            data: "",
           });
         }
         if (result) {
@@ -92,7 +95,7 @@ router.post("/sign-in", (req, res, next) => {
             }
           );
           return res.status(200).json({
-            message: "Auth success",
+            message: "S",
             token,
           });
         }
