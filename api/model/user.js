@@ -1,7 +1,17 @@
 const mongoose = require("mongoose");
 
-const userSchema = mongoose.Schema({
-  _id: mongoose.Types.ObjectId,
+const Schema = mongoose.Schema
+
+const userSchema = new Schema({
+  _id: {
+    type: Schema.Types.ObjectId,
+		required: true,
+  },
+  username: {
+    type: String,
+    required: true,
+    match: /^(\S+$)/g
+  },
   email: {
     type: String,
     required: true,

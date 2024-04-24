@@ -5,7 +5,6 @@ exports.getProducts = (req, res, next) => {
   Product.find()
     .exec()
     .then((result) => {
-      console.log("find result---: ", result);
       if (result.length) {
         res.status(200).json(result);
       } else {
