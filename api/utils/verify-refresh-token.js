@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const UserToken = require("../model/user-token");
-const { MESSAGE } = require("../constant");
+const { MESSAGE } = require("../constant/response");
 
 module.exports = async (refreshToken) => {
   try {

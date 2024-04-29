@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 
-const { STATUS, MESSAGE, ROLE } = require("../constant");
+const { STATUS, MESSAGE } = require("../constant/response");
 const generateToken = require("../utils/generate-token");
 
 const User = require("../model/user");
@@ -125,8 +125,8 @@ exports.logout = async (request, response, next) => {
   const refreshToken = request.body.refreshToken;
   if (!refreshToken) {
     return response.status(STATUS.SUCCESS).json({
-      message: MESSAGE.NOT_FOUNT_REFRESH_TOKEN.message,
-      error_code: MESSAGE.NOT_FOUNT_REFRESH_TOKEN.code,
+      message: MESSAGE.NOT_FOUND_REFRESH_TOKEN.message,
+      error_code: MESSAGE.NOT_FOUND_REFRESH_TOKEN.code,
       data: "",
     });
   }

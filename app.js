@@ -1,27 +1,24 @@
 const express = require("express");
-// const cors = require("cors");
 const app = express();
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
+const { config } = require("dotenv");
+// const bodyParser = require("body-parser");
 
 const productsRoute = require("./api/routes/products.js");
 const ordersRoute = require("./api/routes/orders.js");
 const userRoute = require("./api/routes/user.js");
+const courseRoute = require("./api/routes/course.js");
+const cartRoute = require("./api/routes/cart.js");
 
-const dbURI = `mongodb+srv://duytrancs13:${process.env.MONGOOSE_ATLAS_PW}@node-tuts.k3ee6rq.mongodb.net/p-studio?retryWrites=true&w=majority`;
-mongoose
-  .connect(dbURI)
-  .then(() => {
-    console.log("mongoose connected");
-    // app.listen("8000");
-  })
-  .catch((error) => console.log("mongoose connected error: ", error));
+const dbConnect = require("./db-connect.js");
+
+config();
+dbConnect();
 
 // body-parser
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json())
+app.use(express.json());
 
-// version express <4.16 install bodyParser 
+// version express <4.16 install bodyParser
 // app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -35,9 +32,9 @@ app.use((req, res, next) => {
   // Request headers you wish to allow
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
-  if(req.method === 'OPTIONS'){
+  if (req.method === "OPTIONS") {
     return res.send(200);
- }
+  }
 
   // Pass to next layer of middleware
   next();
@@ -45,6 +42,8 @@ app.use((req, res, next) => {
 
 app.use("/products", productsRoute);
 app.use("/orders", ordersRoute);
+app.use("/api/course", courseRoute);
+app.use("/api/cart", cartRoute);
 app.use("/api", userRoute);
 
 // CORS

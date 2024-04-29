@@ -1,14 +1,14 @@
 const jwt = require("jsonwebtoken");
 
-const { MESSAGE, STATUS } = require("../constant");
+const { STATUS, MESSAGE } = require("../constant/response");
 
 module.exports = async (request, response, next) => {
   const token = request.headers.authorization?.replace("Bearer ", "");
 
   if (!token) {
     return response.status(STATUS.SUCCESS).json({
-      error_code: MESSAGE.NOT_FOUNT_TOKEN.code,
-      message: MESSAGE.NOT_FOUNT_TOKEN.message,
+      error_code: MESSAGE.NOT_FOUND_TOKEN.code,
+      message: MESSAGE.NOT_FOUND_TOKEN.message,
       data: "",
     });
   }
