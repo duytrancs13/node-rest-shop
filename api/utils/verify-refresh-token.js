@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 
 const UserToken = require("../model/user-token");
 const { MESSAGE } = require("../constant/response");
-const { REFRESH_TOKEN_PRIVATE_KEY } = require("../../config.js");
 
 module.exports = async (refreshToken) => {
   try {
@@ -15,10 +14,10 @@ module.exports = async (refreshToken) => {
         error_code: MESSAGE.INVALID_REFRESH_TOKEN.code,
       });
     }
-
+    // REFRESH_TOKEN_PRIVATE_KEY
     const verifyRefreshTokenResp = jwt.verify(
       refreshToken,
-      REFRESH_TOKEN_PRIVATE_KEY
+      "justin_bieber"
     );
     return verifyRefreshTokenResp;
   } catch (error) {

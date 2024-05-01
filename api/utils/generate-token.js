@@ -1,10 +1,6 @@
 const jwt = require("jsonwebtoken");
 
 const UserToken = require("../model/user-token");
-const {
-  ACCESS_TOKEN_PRIVATE_KEY,
-  REFRESH_TOKEN_PRIVATE_KEY,
-} = require("../../config.js");
 
 module.exports = async (user) => {
   try {
@@ -12,11 +8,12 @@ module.exports = async (user) => {
       _id: user._id,
       role: user.role,
     };
-
-    const accessToken = jwt.sign(payload, ACCESS_TOKEN_PRIVATE_KEY, {
+    // ACCESS_TOKEN_PRIVATE_KEY
+    const accessToken = jwt.sign(payload, "kanye_west", {
       expiresIn: "3h",
     });
-    const refreshToken = jwt.sign(payload, REFRESH_TOKEN_PRIVATE_KEY, {
+    // REFRESH_TOKEN_PRIVATE_KEY
+    const refreshToken = jwt.sign(payload, "justin_bieber", {
       expiresIn: "30d",
     });
 

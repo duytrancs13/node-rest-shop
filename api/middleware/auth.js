@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 
 const { STATUS, MESSAGE } = require("../constant/response");
-const { ACCESS_TOKEN_PRIVATE_KEY } = require("../../config.js");
 
 module.exports = async (request, response, next) => {
   const token = request.headers.authorization?.replace("Bearer ", "");
@@ -14,7 +13,8 @@ module.exports = async (request, response, next) => {
     });
   }
   try {
-    const decodedToken = jwt.verify(token, ACCESS_TOKEN_PRIVATE_KEY);
+    // ACCESS_TOKEN_PRIVATE_KEY
+    const decodedToken = jwt.verify(token, "kanye_west");
     request.decodedToken = decodedToken;
     next();
   } catch (error) {
