@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const { config } = require("dotenv");
+// const { config } = require("dotenv");
 // const bodyParser = require("body-parser");
 
 const productsRoute = require("./api/routes/products.js");
@@ -11,7 +11,7 @@ const cartRoute = require("./api/routes/cart.js");
 
 const dbConnect = require("./db-connect.js");
 
-config();
+// config();
 dbConnect();
 
 // body-parser

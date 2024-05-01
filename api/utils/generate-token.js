@@ -1,5 +1,10 @@
 const jwt = require("jsonwebtoken");
+
 const UserToken = require("../model/user-token");
+const {
+  ACCESS_TOKEN_PRIVATE_KEY,
+  REFRESH_TOKEN_PRIVATE_KEY,
+} = require("../../config.js");
 
 module.exports = async (user) => {
   try {
@@ -8,20 +13,12 @@ module.exports = async (user) => {
       role: user.role,
     };
 
-    const accessToken = jwt.sign(
-      payload,
-      process.env.ACCESS_TOKEN_PRIVATE_KEY,
-      {
-        expiresIn: "3h",
-      }
-    );
-    const refreshToken = jwt.sign(
-      payload,
-      process.env.REFRESH_TOKEN_PRIVATE_KEY,
-      {
-        expiresIn: "30d",
-      }
-    );
+    const accessToken = jwt.sign(payload, ACCESS_TOKEN_PRIVATE_KEY, {
+      expiresIn: "3h",
+    });
+    const refreshToken = jwt.sign(payload, REFRESH_TOKEN_PRIVATE_KEY, {
+      expiresIn: "30d",
+    });
 
     const userToken = await UserToken.findOne({ userId: user._id });
     if (userToken) {

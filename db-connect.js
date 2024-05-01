@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
 
+const { DB } = require("./config.js");
+
 module.exports = dbConnect = () => {
-  mongoose.connect(process.env.DB);
+  mongoose.connect(DB);
 
   mongoose.connection.on("connected", () =>
     console.log("Connected to database successfully")
