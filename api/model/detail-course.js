@@ -7,7 +7,7 @@ const schema = new Schema({
     type: Schema.Types.ObjectId,
     required: true,
   },
-  idCourse: {
+  courseId: {
     type: String,
     required: true,
   },
@@ -33,6 +33,6 @@ const schema = new Schema({
   },
 });
 
-const DetailCourse = mongoose.model("DetailCourse", schema);
+const DetailCourse = mongoose.model("DetailCourse", schema, "detailCourse");
 
 module.exports = DetailCourse;

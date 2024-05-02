@@ -17,7 +17,7 @@ const migrateCourses = async () => {
         await new DetailCourse({
           ...MORE_DETAIL_COURSES[i],
           _id: new mongoose.Types.ObjectId(),
-          idCourse: courseResp._id,
+          courseId: courseResp._id,
           level: courseResp.level,
           title: courseResp.title,
           description: courseResp.description,

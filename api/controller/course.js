@@ -22,7 +22,7 @@ exports.getCourses = async (request, response, next) => {
 exports.getCourseById = async (request, response, next) => {
   const courseId = request.params.courseId;
   try {
-    const course = await DetailCourse.findById(courseId);
+    const course = await DetailCourse.findOne({ courseId });
     return response.status(STATUS.SUCCESS).json({
       error_code: MESSAGE.SUCCESS.code,
       message: MESSAGE.SUCCESS.message,
