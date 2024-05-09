@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const { STATUS, MESSAGE } = require("../constant/response");
 const Cart = require("../model/cart");
+const Course = require("../model/course");
 
 exports.getCart = async (request, response, next) => {
   try {
@@ -10,7 +11,7 @@ exports.getCart = async (request, response, next) => {
     return response.status(STATUS.SUCCESS).json({
       error_code: MESSAGE.SUCCESS.code,
       message: MESSAGE.SUCCESS.message,
-      data: cart,
+      data: cart ? cart.courses : [],
     });
   } catch (error) {
     response.status(STATUS.ERROR).json({
@@ -26,9 +27,9 @@ exports.addToCart = async (request, response, next) => {
     // check input course
     const courseId = request.body.courseId;
 
-    const course =
-      mongoose.Types.ObjectId.isValid(courseId) ??
-      (await Course.findById(courseId));
+    const course = mongoose.Types.ObjectId.isValid(courseId)
+      ? await Course.findById(courseId)
+      : null;
 
     if (!course) {
       return response.status(STATUS.SUCCESS).json({
@@ -44,17 +45,18 @@ exports.addToCart = async (request, response, next) => {
     if (!cart) {
       await new Cart({
         userId: decodedToken._id,
-        courses: [courseId],
+        courses: [course],
       }).save();
       return response.status(STATUS.SUCCESS).json({
         error_code: MESSAGE.SUCCESS.code,
         message: MESSAGE.SUCCESS.message,
-        data: "",
+        data: [course],
       });
     }
 
     const courses = cart.courses;
-    const isExistedCourse = courses.find((c) => c === courseId);
+    const isExistedCourse = courses.find((c) => c._id.toString() === courseId);
+
     if (isExistedCourse) {
       return response.status(STATUS.SUCCESS).json({
         error_code: MESSAGE.EXIST_COURSE.code,
@@ -64,7 +66,7 @@ exports.addToCart = async (request, response, next) => {
     }
 
     const updateOps = {
-      courses: [...courses, courseId],
+      courses: [...courses, course],
     };
 
     // ADD MORE
@@ -76,10 +78,9 @@ exports.addToCart = async (request, response, next) => {
     response.status(STATUS.SUCCESS).json({
       error_code: MESSAGE.SUCCESS.code,
       message: MESSAGE.SUCCESS.message,
-      data: "",
+      data: updateOps.courses,
     });
   } catch (error) {
-    console.log("error-----", error);
     response.status(STATUS.ERROR).json({
       error_code: MESSAGE.SERVER.code,
       message: MESSAGE.SERVER.message,
@@ -98,7 +99,7 @@ exports.removeToCart = async (request, response, next) => {
     return response.status(STATUS.SUCCESS).json({
       error_code: MESSAGE.INVALID_COURSE.code,
       message: MESSAGE.INVALID_COURSE.message,
-      data: "",
+      data: [],
     });
   }
 
@@ -108,38 +109,48 @@ exports.removeToCart = async (request, response, next) => {
     return response.status(STATUS.SUCCESS).json({
       error_code: MESSAGE.NOT_EXIST_CART.code,
       message: MESSAGE.NOT_EXIST_CART.message,
-      data: "",
+      data: [],
     });
   }
 
   const courses = cart.courses;
-  const isExistedCourse = courses.find((c) => c === courseId);
+  console.log("courses", courses);
+  const isExistedCourse = courses.find((c) => c._id.toString() === courseId);
+  console.log("isExistedCourse: ", isExistedCourse);
   if (!isExistedCourse) {
     return response.status(STATUS.SUCCESS).json({
       error_code: MESSAGE.NOT_EXIST_COURSE.code,
       message: MESSAGE.NOT_EXIST_COURSE.message,
-      data: "",
+      data: courses,
     });
   }
 
   // check delete cart
-  if (courses.length === 1 && courses.find((c) => c === courseId)) {
+  if (
+    courses.length === 1 &&
+    courses.find((c) => c._id.toString() === courseId)
+  ) {
     await Cart.findOneAndDelete({ userId: decodedToken._id });
+    response.status(STATUS.SUCCESS).json({
+      error_code: MESSAGE.SUCCESS.code,
+      message: MESSAGE.SUCCESS.message,
+      data: [],
+    });
   } else {
     // update
+    const finalCourses = courses.filter((c) => c._id.toString() !== courseId);
     const updateOps = {
-      courses: courses.filter((c) => c !== courseId),
+      courses: finalCourses,
     };
     // REMOVE
     await Cart.findOneAndUpdate(
       { userId: decodedToken._id },
       { $set: updateOps }
     );
+    response.status(STATUS.SUCCESS).json({
+      error_code: MESSAGE.SUCCESS.code,
+      message: MESSAGE.SUCCESS.message,
+      data: finalCourses,
+    });
   }
-
-  response.status(STATUS.SUCCESS).json({
-    error_code: MESSAGE.SUCCESS.code,
-    message: MESSAGE.SUCCESS.message,
-    data: "",
-  });
 };

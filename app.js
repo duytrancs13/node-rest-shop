@@ -8,6 +8,7 @@ const ordersRoute = require("./api/routes/orders.js");
 const userRoute = require("./api/routes/user.js");
 const courseRoute = require("./api/routes/course.js");
 const cartRoute = require("./api/routes/cart.js");
+const paymentRoute = require("./api/routes/payment.js");
 
 const dbConnect = require("./db-connect.js");
 
@@ -45,6 +46,7 @@ app.use("/products", productsRoute);
 app.use("/orders", ordersRoute);
 app.use("/api/course", courseRoute);
 app.use("/api/cart", cartRoute);
+app.use("/api/request-payment", paymentRoute);
 app.use("/api", userRoute);
 
 // CORS
