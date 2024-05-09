@@ -114,14 +114,12 @@ exports.removeToCart = async (request, response, next) => {
   }
 
   const courses = cart.courses;
-  console.log("courses", courses);
   const isExistedCourse = courses.find((c) => c._id.toString() === courseId);
-  console.log("isExistedCourse: ", isExistedCourse);
   if (!isExistedCourse) {
     return response.status(STATUS.SUCCESS).json({
       error_code: MESSAGE.NOT_EXIST_COURSE.code,
       message: MESSAGE.NOT_EXIST_COURSE.message,
-      data: courses,
+      data: [],
     });
   }
 
