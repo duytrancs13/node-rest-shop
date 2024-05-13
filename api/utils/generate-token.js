@@ -6,14 +6,16 @@ module.exports = async (user) => {
   try {
     const payload = {
       _id: user._id,
-      role: user.role,
+      role: user.role || "user",
     };
-    // ACCESS_TOKEN_PRIVATE_KEY
-    const accessToken = jwt.sign(payload, "kanye_west", {
-      expiresIn: "3h",
-    });
-    // REFRESH_TOKEN_PRIVATE_KEY
-    const refreshToken = jwt.sign(payload, "justin_bieber", {
+    const accessToken = jwt.sign(
+      payload,
+      process.env.ACCESS_TOKEN_PRIVATE_KEY,
+      {
+        expiresIn: "3m",
+      }
+    );
+    const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_PRIVATE_KEY, {
       expiresIn: "30d",
     });
 

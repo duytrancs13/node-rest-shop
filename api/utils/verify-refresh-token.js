@@ -14,16 +14,15 @@ module.exports = async (refreshToken) => {
         error_code: MESSAGE.INVALID_REFRESH_TOKEN.code,
       });
     }
-    // REFRESH_TOKEN_PRIVATE_KEY
     const verifyRefreshTokenResp = jwt.verify(
       refreshToken,
-      "justin_bieber"
+      process.env.REFRESH_TOKEN_PRIVATE_KEY
     );
     return verifyRefreshTokenResp;
   } catch (error) {
     return Promise.reject({
-      message: MESSAGE.SERVER.message,
-      error_code: MESSAGE.SERVER.code,
+      message: MESSAGE.EXPIRED_REFRESH_TOKEN.message,
+      error_code: MESSAGE.EXPIRED_REFRESH_TOKEN.code,
     });
   }
 };

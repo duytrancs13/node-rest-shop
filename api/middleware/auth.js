@@ -13,11 +13,11 @@ module.exports = async (request, response, next) => {
     });
   }
   try {
-    // ACCESS_TOKEN_PRIVATE_KEY
-    const decodedToken = jwt.verify(token, "kanye_west");
+    const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_PRIVATE_KEY);
     request.decodedToken = decodedToken;
     next();
   } catch (error) {
+    
     return response.status(STATUS.SUCCESS).json({
       error_code: MESSAGE.INVALID_TOKEN.code,
       message: MESSAGE.INVALID_TOKEN.message,

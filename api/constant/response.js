@@ -17,7 +17,7 @@ const MESSAGE = {
     message: "Token không hợp lệ",
   },
   INVALID_REFRESH_TOKEN: {
-    code: 403,
+    code: 402,
     message: "Refresh token không hợp lệ",
   },
   NOT_FOUND_TOKEN: {
@@ -27,6 +27,10 @@ const MESSAGE = {
   NOT_FOUND_REFRESH_TOKEN: {
     code: 404,
     message: "Không cung cấp refresh token",
+  },
+  EXPIRED_REFRESH_TOKEN: {
+    code: 419,
+    message: "Refresh token đã hết hạn",
   },
   
   // SIGN UP

@@ -1,0 +1,9 @@
+{
+  "env": {
+    "MONGOOSE_ATLAS_PW": "hipesoqa",
+    "ACCESS_TOKEN_PRIVATE_KEY": "kanye_west",
+    "REFRESH_TOKEN_PRIVATE_KEY": "justin_bieber",
+
+    "BASE_URL": "localhost:8000/api"
+  }
+}

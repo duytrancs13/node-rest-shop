@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
 
 const { STATUS, MESSAGE } = require("../constant/response");
 const generateToken = require("../utils/generate-token");
@@ -10,6 +11,7 @@ const UserToken = require("../model/user-token");
 
 const ResetPasswordToken = require("../model/reset-password-token");
 const sendEmail = require("../utils/send-email");
+const verifyRefreshToken = require("../utils/verify-refresh-token");
 
 exports.signUp = async (request, response, next) => {
   try {
@@ -121,7 +123,7 @@ exports.getUserInfo = async (request, response, next) => {
   }
 };
 
-exports.logout = async (request, response, next) => {
+exports.signOut = async (request, response, next) => {
   const refreshToken = request.body.refreshToken;
   if (!refreshToken) {
     return response.status(STATUS.SUCCESS).json({
@@ -133,13 +135,13 @@ exports.logout = async (request, response, next) => {
   const userToken = await UserToken.findOne({ token: refreshToken });
   if (!userToken) {
     return response.status(STATUS.SUCCESS).json({
-      message: MESSAGE.SUCCESS.message,
-      error_code: MESSAGE.SUCCESS.code,
+      message: MESSAGE.INVALID_REFRESH_TOKEN.message,
+      error_code: MESSAGE.INVALID_REFRESH_TOKEN.code,
       data: "",
     });
   }
   await userToken.deleteOne();
-  response.status(200).json({
+  response.status(300).json({
     message: MESSAGE.SUCCESS.message,
     error_code: MESSAGE.SUCCESS.code,
     data: "",
@@ -189,23 +191,24 @@ exports.resetPassword = async (request, response, next) => {
   try {
     const user = await User.findById(request.body.userId);
 
-    if (!user) return response.status(STATUS.SUCCESS).json({
-      error_code: MESSAGE.INVALID_USER.code,
-      message: MESSAGE.INVALID_USER.message,
-      data: "",
-    });
+    if (!user)
+      return response.status(STATUS.SUCCESS).json({
+        error_code: MESSAGE.INVALID_USER.code,
+        message: MESSAGE.INVALID_USER.message,
+        data: "",
+      });
 
     const resetPasswordToken = await ResetPasswordToken.findOne({
       userId: user._id,
       token: request.body.token,
     });
 
-
-    if (!resetPasswordToken) return response.status(STATUS.SUCCESS).json({
-      error_code: MESSAGE.INVALID_TOKEN.code,
-      message: MESSAGE.INVALID_TOKEN.message,
-      data: "",
-    });
+    if (!resetPasswordToken)
+      return response.status(STATUS.SUCCESS).json({
+        error_code: MESSAGE.INVALID_TOKEN.code,
+        message: MESSAGE.INVALID_TOKEN.message,
+        data: "",
+      });
 
     user.password = await bcrypt.hash(request.body.newPassword, 10);
     await user.save();
@@ -217,6 +220,49 @@ exports.resetPassword = async (request, response, next) => {
       data: "",
     });
   } catch (error) {
+    response.status(STATUS.ERROR).json({
+      error_code: MESSAGE.SERVER.code,
+      message: MESSAGE.SERVER.message,
+      data: "",
+    });
+  }
+};
+
+exports.refreshToken = async (request, response, next) => {
+  try {
+    const refreshToken = request.body.refreshToken;
+
+    const verifyRefreshTokenResp = await verifyRefreshToken(refreshToken);
+
+    const payload = {
+      _id: verifyRefreshTokenResp._id,
+      role: verifyRefreshTokenResp.role,
+    };
+
+    const accessToken = jwt.sign(
+      payload,
+      process.env.ACCESS_TOKEN_PRIVATE_KEY,
+      {
+        expiresIn: "1m",
+      }
+    );
+
+    response.status(STATUS.SUCCESS).json({
+      error_code: MESSAGE.SUCCESS.code,
+      message: MESSAGE.SUCCESS.message,
+      data: { accessToken },
+    });
+  } catch (error) {
+    if (
+      error?.error_code === MESSAGE.INVALID_REFRESH_TOKEN.code ||
+      error?.error_code === MESSAGE.EXPIRED_REFRESH_TOKEN.code
+    ) {
+      return response.status(STATUS.SUCCESS).json({
+        ...error,
+        data: "",
+      });
+    }
+
     response.status(STATUS.ERROR).json({
       error_code: MESSAGE.SERVER.code,
       message: MESSAGE.SERVER.message,
