@@ -141,7 +141,7 @@ exports.signOut = async (request, response, next) => {
     });
   }
   await userToken.deleteOne();
-  response.status(300).json({
+  response.status(STATUS.SUCCESS).json({
     message: MESSAGE.SUCCESS.message,
     error_code: MESSAGE.SUCCESS.code,
     data: "",
