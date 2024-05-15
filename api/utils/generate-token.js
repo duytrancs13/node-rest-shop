@@ -12,11 +12,11 @@ module.exports = async (user) => {
       payload,
       process.env.ACCESS_TOKEN_PRIVATE_KEY,
       {
-        expiresIn: "3m",
+        expiresIn: "1m",
       }
     );
     const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_PRIVATE_KEY, {
-      expiresIn: "30d",
+      expiresIn: "3m",
     });
 
     const userToken = await UserToken.findOne({ userId: user._id });
