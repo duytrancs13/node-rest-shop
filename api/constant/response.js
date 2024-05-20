@@ -70,6 +70,18 @@ const MESSAGE = {
     code: 404,
     message: "Khoá học không tồn tại",
   },
+  INVALID_INPUT: {
+    code: 405,
+    message: "Dữ liệu đầu vào không đúng",
+  },
+  NOT_EXIST_COURSE_IN_CART: {
+    code: 406,
+    message: "Không tìm thấy khoá học trong giỏ hàng",
+  },
+  EXIST_COURSE_IN_MY_COURSE: {
+    code: 407,
+    message: "Bạn đã mua khoá học này",
+  },
 };
 
 const ROLE = {
