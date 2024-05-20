@@ -3,7 +3,13 @@ const router = express.Router();
 
 const auth = require("../middleware/auth");
 const CurriculumController = require("../controller/curriculum");
+const verifyMyCourse = require("../utils/verify-my-course");
 
-router.get("/:courseId", auth, CurriculumController.getCurriculum);
+router.get(
+  "/:courseId",
+  auth,
+  verifyMyCourse,
+  CurriculumController.getCurriculum
+);
 
 module.exports = router;

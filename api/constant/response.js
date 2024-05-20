@@ -82,6 +82,10 @@ const MESSAGE = {
     code: 407,
     message: "Bạn đã mua khoá học này",
   },
+  NOT_PURCHASED_COURSE: {
+    code: 408,
+    message: "Bạn chưa mua khoá học này",
+  },
 };
 
 const ROLE = {
