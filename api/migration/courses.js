@@ -2,12 +2,13 @@ const mongoose = require("mongoose");
 
 const { config } = require("dotenv");
 
-const { COURSES, MORE_DETAIL_COURSES } = require("../constant/courses");
+const { COURSES, MORE_DETAIL_COURSES, CURRICULUM } = require("../constant/courses");
 const DetailCourse = require("../model/detail-course");
+const Curriculum = require("../model/curriculum");
 
 config();
 
-mongoose.connect(process.env.DB);
+mongoose.connect("mongodb+srv://duytrancs13:hipesoqa@node-tuts.k3ee6rq.mongodb.net/p-studio?retryWrites=true&w=majority");
 
 const migrateCourses = async () => {
   for (let i = 0; i < COURSES.length; i++) {
@@ -22,6 +23,12 @@ const migrateCourses = async () => {
           title: courseResp.title,
           description: courseResp.description,
           price: courseResp.price,
+        }).save();
+
+        await new Curriculum({
+          ...CURRICULUM[i],
+          _id: new mongoose.Types.ObjectId(),
+          courseId: courseResp._id,
         }).save();
       }
       if (i === COURSES.length - 1) exit();

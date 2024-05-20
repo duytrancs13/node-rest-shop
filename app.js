@@ -10,6 +10,7 @@ const courseRoute = require("./api/routes/course.js");
 const cartRoute = require("./api/routes/cart.js");
 const paymentRoute = require("./api/routes/payment.js");
 const myCourseRoute = require("./api/routes/my-course.js");
+const curriculumRoute = require("./api/routes/curriculum.js");
 
 const dbConnect = require("./db-connect.js");
 
@@ -49,6 +50,7 @@ app.use("/api/course", courseRoute);
 app.use("/api/cart", cartRoute);
 app.use("/api/request-payment", paymentRoute);
 app.use("/api/my-course", myCourseRoute);
+app.use("/api/curriculum", curriculumRoute);
 app.use("/api", userRoute);
 
 // CORS
