@@ -1,3 +1,5 @@
+const { STATUS, MESSAGE } = require("../constant/response");
+
 exports.requestPayment = async (request, response, next) => {
   //https://developers.momo.vn/#/docs/en/aiov2/?id=payment-method
   //parameters
@@ -85,7 +87,11 @@ exports.requestPayment = async (request, response, next) => {
       console.log("Body: ");
       console.log(body);
       console.log("payUrl: ");
-      console.log(JSON.parse(body).payUrl);
+      return response.status(STATUS.SUCCESS).json({
+        error_code: MESSAGE.SUCCESS.code,
+        message: MESSAGE.SUCCESS.message,
+        data: JSON.parse(body).payUrl,
+      });
     });
     res.on("end", () => {
       console.log("No more data in response.");
