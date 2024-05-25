@@ -3,6 +3,15 @@ const app = express();
 // const { config } = require("dotenv");
 // const bodyParser = require("body-parser");
 
+const multer = require("multer");
+const firebase = require("firebase");
+const {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+} = require("firebase/storage");
+
 const productsRoute = require("./api/routes/products.js");
 const ordersRoute = require("./api/routes/orders.js");
 const userRoute = require("./api/routes/user.js");
@@ -45,6 +54,22 @@ app.use((req, res, next) => {
   next();
 });
 
+const firebaseConfig = {
+  apiKey: "AIzaSyCoITtjdObw5-XoRrvxY_jNhLRQzy6kLz4",
+  authDomain: "videostore-fc49a.firebaseapp.com",
+  projectId: "videostore-fc49a",
+  storageBucket: "videostore-fc49a.appspot.com",
+  messagingSenderId: "863212569078",
+  appId: "1:863212569078:web:96a541091f68f0c2be87d7",
+  measurementId: "G-54B0FN4L8X",
+};
+firebase.initializeApp(firebaseConfig);
+
+const storage = getStorage();
+const upload = multer({
+  storage: multer.memoryStorage(),
+});
+
 app.use("/products", productsRoute);
 app.use("/orders", ordersRoute);
 app.use("/api/course", courseRoute);
@@ -54,6 +79,28 @@ app.use("/api/request-payment", paymentRoute);
 app.use("/api/my-course", myCourseRoute);
 app.use("/api/curriculum", curriculumRoute);
 app.use("/api", userRoute);
+
+app.post("/upload", upload.single("video"), (req, res) => {
+  if (!req.file) {
+    res.status(400).send("No file uploaded");
+    return;
+  }
+});
+
+const StorageRef = ref(storage, req.file.originalname);
+const metadata = {
+  contentType: "video/mp4",
+};
+uploadBytes(StorageRef, req.file.buffer, metadata).then(() => {
+  getDownloadURL(StorageRef)
+    .then((url) => {
+      res.send({ url });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).send(error);
+    });
+});
 
 // CORS
 // app.use(cors({ origin: ["http://localhost:3000", "http://127.0.0.1:3000", "phonglam.surge.sh"] }));
