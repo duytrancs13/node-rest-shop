@@ -86,6 +86,11 @@ const MESSAGE = {
     code: 408,
     message: "Bạn chưa mua khoá học này",
   },
+
+  MOMO_ERROR: {
+    code: 9001,
+    message: "Lỗi hệ thông thanh toán MOMO",
+  },
 };
 
 const ROLE = {

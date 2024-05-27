@@ -36,7 +36,6 @@ exports.requestPayment = async (request, response, next) => {
   }
 
   const myCourse = await MyCourse.findOne({ userId });
-  console.log("myCourse: ", myCourse);
 
   // Check valid courses
   courses.forEach(async (courseId) => {
