@@ -139,7 +139,7 @@ const MOMO_ERROR = [
   },
 ];
 
-const REDIRECT_URL = "https://phonglam.surge.sh/result-payment";
+const REDIRECT_URL = "https://phonglam.surge.sh/ket-qua-thanh-toan";
 
 exports.requestPayment = async (request, response, next) => {
   const price = request.body.price;

@@ -12,7 +12,12 @@ exports.getCart = async (request, response, next) => {
     return response.status(STATUS.SUCCESS).json({
       error_code: MESSAGE.SUCCESS.code,
       message: MESSAGE.SUCCESS.message,
-      data: cart ? cart.courses : [],
+      data: {
+        courses: cart ? cart.courses : [],
+        priceTotal: cart
+          ? cart.courses.reduce((total, c) => total + c.price, 0)
+          : 0,
+      },
     });
   } catch (error) {
     response.status(STATUS.ERROR).json({
@@ -51,7 +56,10 @@ exports.addToCart = async (request, response, next) => {
       return response.status(STATUS.SUCCESS).json({
         error_code: MESSAGE.SUCCESS.code,
         message: MESSAGE.SUCCESS.message,
-        data: [course],
+        data: {
+          courses: [course],
+          priceTotal: course.price,
+        },
       });
     }
 
@@ -79,7 +87,10 @@ exports.addToCart = async (request, response, next) => {
     response.status(STATUS.SUCCESS).json({
       error_code: MESSAGE.SUCCESS.code,
       message: MESSAGE.SUCCESS.message,
-      data: updateOps.courses,
+      data: {
+        courses: updateOps.courses,
+        priceTotal: updateOps.courses.reduce((total, c) => total + c.price, 0),
+      },
     });
   } catch (error) {
     response.status(STATUS.ERROR).json({
@@ -133,7 +144,10 @@ exports.removeToCart = async (request, response, next) => {
     response.status(STATUS.SUCCESS).json({
       error_code: MESSAGE.SUCCESS.code,
       message: MESSAGE.SUCCESS.message,
-      data: [],
+      data: {
+        courses: [],
+        priceTotal: 0,
+      },
     });
   } else {
     // update
@@ -150,6 +164,10 @@ exports.removeToCart = async (request, response, next) => {
       error_code: MESSAGE.SUCCESS.code,
       message: MESSAGE.SUCCESS.message,
       data: finalCourses,
+      data: {
+        courses: finalCourses,
+        priceTotal: finalCourses.reduce((total, c) => total + c.price, 0),
+      },
     });
   }
 };
