@@ -13,6 +13,7 @@ const requestPaymentRoute = require("./api/routes/request-payment.js");
 const resultPaymentRoute = require("./api/routes/result-payment.js");
 const myCourseRoute = require("./api/routes/my-course.js");
 const curriculumRoute = require("./api/routes/curriculum.js");
+const videoRoute = require("./api/routes/video.js");
 
 const dbConnect = require("./db-connect.js");
 
@@ -55,6 +56,7 @@ app.use("/api/request-payment", paymentRoute);
 app.use("/api/result-payment", resultPaymentRoute);
 app.use("/api/my-course", myCourseRoute);
 app.use("/api/curriculum", curriculumRoute);
+app.use("/api/video", videoRoute);
 app.use("/api", userRoute);
 
 // CORS
