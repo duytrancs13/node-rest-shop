@@ -6,7 +6,13 @@ const jwt = require("jsonwebtoken");
 const { STATUS, MESSAGE } = require("../constant/response");
 const generateToken = require("../utils/generate-token");
 
-const User = require("../model/user");
+const {
+  User,
+  validateSignUp,
+  validateSignIn,
+  validateEmail,
+  validateResetPassword,
+} = require("../model/user");
 const UserToken = require("../model/user-token");
 
 const ResetPasswordToken = require("../model/reset-password-token");
@@ -15,7 +21,14 @@ const verifyRefreshToken = require("../utils/verify-refresh-token");
 
 exports.signUp = async (request, response, next) => {
   try {
-    // TODO: Check valid email, password here
+    const { error } = validateSignUp(request.body);
+    if (error) {
+      return response.status(STATUS.SUCCESS).json({
+        error_code: MESSAGE.INVALID_INPUT.code,
+        message: error.details[0].message,
+        data: "",
+      });
+    }
 
     const user = await User.findOne({ email: request.body.email });
     if (user) {
@@ -50,9 +63,16 @@ exports.signUp = async (request, response, next) => {
 };
 
 exports.signIn = async (request, response, next) => {
-  // TODO: Check valid email, password here
-
   try {
+    const { error } = validateSignIn(request.body);
+    if (error) {
+      return response.status(STATUS.SUCCESS).json({
+        error_code: MESSAGE.INVALID_INPUT.code,
+        message: error.details[0].message,
+        data: "",
+      });
+    }
+
     const user = await User.findOne({ email: request.body.email });
     if (!user) {
       return response.status(STATUS.SUCCESS).json({
@@ -150,6 +170,15 @@ exports.signOut = async (request, response, next) => {
 
 exports.verifyEmail = async (request, response, next) => {
   try {
+    const { error } = validateEmail(request.body);
+    if (error) {
+      return response.status(STATUS.SUCCESS).json({
+        error_code: MESSAGE.INVALID_INPUT.code,
+        message: error.details[0].message,
+        data: "",
+      });
+    }
+
     const user = await User.findOne({ email: request.body.email });
     if (!user) {
       return response.status(STATUS.SUCCESS).json({
@@ -189,6 +218,15 @@ exports.verifyEmail = async (request, response, next) => {
 
 exports.resetPassword = async (request, response, next) => {
   try {
+    const { error } = validateResetPassword(request.body.newPassword);
+    if (error) {
+      return response.status(STATUS.SUCCESS).json({
+        error_code: MESSAGE.INVALID_INPUT.code,
+        message: error.details[0].message,
+        data: "",
+      });
+    }
+
     const user = await User.findById(request.body.userId);
 
     if (!user)

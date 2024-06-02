@@ -139,22 +139,23 @@ const MOMO_ERROR = [
   },
 ];
 
-const REDIRECT_URL = "https://phonglam.surge.sh/ket-qua-thanh-toan";
-
 exports.requestPayment = async (request, response, next) => {
-  const price = request.body.price;
   const userId = request.decodedToken._id;
+
+  const price = request.body.price;
+  const productName = request.body.productName;
+  const courseId = request.body.courseId;
 
   var partnerCode = "MOMOCKJ020230627";
   var accessKey = "NJ5sQyRQD54lurxH";
   var secretKey = "gZn6sSi6Uw605rodeyfVJwoGHGRNU7X9";
   var requestId = partnerCode + new Date().getTime();
-  var orderId = requestId;
-  var orderInfo = "pay with MoMo";
-
-  var ipnUrl = (redirectUrl = REDIRECT_URL);
-  var amount = price.toString();
+  var ipnUrl = (redirectUrl = `${process.env.FE_BASE_URL}/ket-qua-thanh-toan`);
   var requestType = "captureWallet";
+
+  var orderId = courseId;
+  var orderInfo = productName;
+  var amount = price.toString();
 
   var extraData = ""; //pass empty value if your merchant does not have stores
 
@@ -244,12 +245,12 @@ exports.requestPayment = async (request, response, next) => {
         if (!momoTransaction) {
           await new MomoTransaction({
             userId,
-            transactionId: rawBody.requestId,
+            transactionId: rawBody.transId,
             courses: request.body.courses,
           }).save();
         } else {
           const updateOps = {
-            transactionId: rawBody.requestId,
+            transactionId: rawBody.transId,
             courses: request.body.courses,
           };
 
@@ -308,9 +309,10 @@ exports.resultPayment = async (request, response, next) => {
   const userId = request.decodedToken._id;
   const momoTransaction = await MomoTransaction.findOne({
     userId,
-    transactionId: request.body.requestId,
+    transactionId: request.body.transId,
   });
 
+  // TO DO: check request payemnt MOMO => upgrade service
   console.log("momoTransaction: ", momoTransaction);
 
   if (!momoTransaction) {
@@ -320,6 +322,9 @@ exports.resultPayment = async (request, response, next) => {
       data: "",
     });
   }
+
+  // TO DO: STORE BILL to DATABASE
+
   request.coursesFromPayment = momoTransaction.courses;
   next();
 };

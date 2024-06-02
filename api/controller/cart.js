@@ -173,7 +173,7 @@ exports.removeToCart = async (request, response, next) => {
 };
 
 exports.verifyCart = async (request, response, next) => {
-  const courses = request.body.courses[0].split(",");
+  const courses = request.body.courses;
   const userId = request.decodedToken._id;
 
   if (!Array.isArray(courses) || !courses.length) {

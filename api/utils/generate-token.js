@@ -12,7 +12,7 @@ module.exports = async (user) => {
       payload,
       process.env.ACCESS_TOKEN_PRIVATE_KEY,
       {
-        expiresIn: "3h",
+        expiresIn: "1m",
       }
     );
     const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_PRIVATE_KEY, {

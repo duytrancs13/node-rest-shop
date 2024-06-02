@@ -1,10 +1,7 @@
 const express = require("express");
 const app = express();
-// const { config } = require("dotenv");
 // const bodyParser = require("body-parser");
 
-const productsRoute = require("./api/routes/products.js");
-const ordersRoute = require("./api/routes/orders.js");
 const userRoute = require("./api/routes/user.js");
 const courseRoute = require("./api/routes/course.js");
 const cartRoute = require("./api/routes/cart.js");
@@ -15,9 +12,8 @@ const myCourseRoute = require("./api/routes/my-course.js");
 const curriculumRoute = require("./api/routes/curriculum.js");
 const videoRoute = require("./api/routes/video.js");
 
-const dbConnect = require("./db-connect.js");
+const dbConnect = require("./db.js");
 
-// config();
 dbConnect();
 
 // body-parser
@@ -47,8 +43,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/products", productsRoute);
-app.use("/orders", ordersRoute);
 app.use("/api/course", courseRoute);
 app.use("/api/cart", cartRoute);
 app.use("/api/request-payment-v1", requestPaymentRoute);
