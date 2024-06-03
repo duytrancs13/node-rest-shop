@@ -1,5 +1,6 @@
 const { STATUS, MESSAGE } = require("../constant/response");
 const MomoTransaction = require("../model/momo-transaction");
+const https = require("https");
 
 const MOMO_ERROR = [
   {
@@ -139,60 +140,34 @@ const MOMO_ERROR = [
   },
 ];
 
+const baseOptions = {
+  hostname: "test-payment.momo.vn",
+  port: 443,
+};
+
+var accessKey = "NJ5sQyRQD54lurxH";
+var secretKey = "gZn6sSi6Uw605rodeyfVJwoGHGRNU7X9";
+
 exports.requestPayment = async (request, response, next) => {
   const userId = request.decodedToken._id;
-
   const price = request.body.price;
-  const productName = request.body.productName;
-  const courseId = request.body.courseId;
 
   var partnerCode = "MOMOCKJ020230627";
-  var accessKey = "NJ5sQyRQD54lurxH";
-  var secretKey = "gZn6sSi6Uw605rodeyfVJwoGHGRNU7X9";
   var requestId = partnerCode + new Date().getTime();
+  var orderId = requestId;
   var ipnUrl = (redirectUrl = `${process.env.FE_BASE_URL}/ket-qua-thanh-toan`);
   var requestType = "captureWallet";
-
-  var orderId = courseId;
-  var orderInfo = productName;
+  var orderInfo = "Thanh toán qua cổng MoMo";
   var amount = price.toString();
-
   var extraData = ""; //pass empty value if your merchant does not have stores
 
-  //before sign HMAC SHA256 with format
-  //accessKey=$accessKey&amount=$amount&extraData=$extraData&ipnUrl=$ipnUrl&orderId=$orderId&orderInfo=$orderInfo&partnerCode=$partnerCode&redirectUrl=$redirectUrl&requestId=$requestId&requestType=$requestType
-  var rawSignature =
-    "accessKey=" +
-    accessKey +
-    "&amount=" +
-    amount +
-    "&extraData=" +
-    extraData +
-    "&ipnUrl=" +
-    ipnUrl +
-    "&orderId=" +
-    orderId +
-    "&orderInfo=" +
-    orderInfo +
-    "&partnerCode=" +
-    partnerCode +
-    "&redirectUrl=" +
-    redirectUrl +
-    "&requestId=" +
-    requestId +
-    "&requestType=" +
-    requestType;
-  //puts raw signature
-  console.log("--------------------RAW SIGNATURE----------------");
-  console.log(rawSignature);
-  //signature
+  var rawSignature = `accessKey=${accessKey}&amount=${amount}&extraData=${extraData}&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}&partnerCode=${partnerCode}&redirectUrl=${redirectUrl}&requestId=${requestId}&requestType=${requestType}`;
+
   const crypto = require("crypto");
   var signature = crypto
     .createHmac("sha256", secretKey)
     .update(rawSignature)
     .digest("hex");
-  console.log("--------------------SIGNATURE----------------");
-  console.log(signature);
 
   //json object send to MoMo endpoint
   const requestBody = JSON.stringify({
@@ -206,14 +181,13 @@ exports.requestPayment = async (request, response, next) => {
     ipnUrl: ipnUrl,
     extraData: extraData,
     requestType: requestType,
+
     signature: signature,
-    lang: "en",
+    lang: "vi",
   });
   //Create the HTTPS objects
-  const https = require("https");
   const options = {
-    hostname: "test-payment.momo.vn",
-    port: 443,
+    ...baseOptions,
     path: "/v2/gateway/api/create",
     method: "POST",
     headers: {
@@ -245,12 +219,12 @@ exports.requestPayment = async (request, response, next) => {
         if (!momoTransaction) {
           await new MomoTransaction({
             userId,
-            transactionId: rawBody.transId,
+            transactionId: rawBody.requestId,
             courses: request.body.courses,
           }).save();
         } else {
           const updateOps = {
-            transactionId: rawBody.transId,
+            transactionId: rawBody.requestId,
             courses: request.body.courses,
           };
 
@@ -267,7 +241,6 @@ exports.requestPayment = async (request, response, next) => {
           data: rawBody.payUrl,
         });
       } catch (error) {
-        console.log("error---: ", error);
         return response.status(STATUS.ERROR).json({
           error_code: MESSAGE.SERVER.code,
           message: MESSAGE.SERVER.message,
@@ -294,7 +267,7 @@ exports.requestPayment = async (request, response, next) => {
 exports.resultPayment = async (request, response, next) => {
   const bill = request.body;
 
-  if (+bill.resultCode !== MESSAGE.SUCCESS.code) {
+  if (!bill || +bill.resultCode !== MESSAGE.SUCCESS.code) {
     const errorCode =
       MOMO_ERROR.find((momoError) => momoError.code === +bill.resultCode) ||
       MESSAGE.MOMO_ERROR;
@@ -306,25 +279,90 @@ exports.resultPayment = async (request, response, next) => {
     });
   }
 
-  const userId = request.decodedToken._id;
-  const momoTransaction = await MomoTransaction.findOne({
-    userId,
-    transactionId: request.body.transId,
+  const orderId = bill.orderId;
+  const requestId = bill.requestId;
+  const partnerCode = bill.partnerCode;
+  var rawSignature = `accessKey=${accessKey}&orderId=${orderId}&partnerCode=${partnerCode}&requestId=${requestId}`;
+
+  const crypto = require("crypto");
+  var signature = crypto
+    .createHmac("sha256", secretKey)
+    .update(rawSignature)
+    .digest("hex");
+
+  const lang = bill.lang || "vi";
+  // Check status transaction
+  const requestBody = JSON.stringify({
+    partnerCode,
+    requestId,
+    orderId,
+    lang,
+    signature,
   });
 
-  // TO DO: check request payemnt MOMO => upgrade service
-  console.log("momoTransaction: ", momoTransaction);
+  const options = {
+    ...baseOptions,
+    path: "/v2/gateway/api/query",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Content-Length": Buffer.byteLength(requestBody),
+    },
+  };
 
-  if (!momoTransaction) {
-    return response.status(STATUS.SUCCESS).json({
-      error_code: MESSAGE.INVALID_INPUT.code,
-      message: MESSAGE.INVALID_INPUT.message,
+  var req = https.request(options, (res) => {
+    res.setEncoding("utf8");
+    res.on("data", async (body) => {
+      try {
+        const rawBody = JSON.parse(body);
+        if (rawBody?.resultCode !== MESSAGE.SUCCESS.code) {
+          const errorCode =
+            MOMO_ERROR.find(
+              (momoError) => momoError.code === rawBody.resultCode
+            ) || MESSAGE.MOMO_ERROR;
+
+          return response.status(STATUS.SUCCESS).json({
+            error_code: errorCode.code,
+            message: errorCode.message,
+            data: "",
+          });
+        }
+
+        const userId = request.decodedToken._id;
+        const momoTransaction = await MomoTransaction.findOne({
+          userId,
+          transactionId: requestId,
+        });
+
+
+        if (!momoTransaction) {
+          return response.status(STATUS.SUCCESS).json({
+            error_code: MESSAGE.INVALID_INPUT.code,
+            message: MESSAGE.INVALID_INPUT.message,
+            data: "",
+          });
+        }
+
+        // TO DO: STORE BILL to DATABASE
+        
+        // Upgrade service
+        request.coursesFromPayment = momoTransaction.courses;
+        next();
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  });
+
+  req.on("error", function (e) {
+    return response.status(STATUS.ERROR).json({
+      error_code: MESSAGE.MOMO_ERROR.code,
+      message: MESSAGE.MOMO_ERROR.message,
       data: "",
     });
-  }
+  });
 
-  // TO DO: STORE BILL to DATABASE
-
-  request.coursesFromPayment = momoTransaction.courses;
-  next();
+  // write data to request body
+  req.write(requestBody);
+  req.end();
 };
