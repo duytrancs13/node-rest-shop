@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "heroku-postbuild": "NODE_ENV=production ng build --prod",
-    "start": "NODE_ENV=development nodemon server.js",
+    "start": "NODE_ENV=production nodem server.js",
+    "dev": "nodemon server.js",
     "migration:write": "node api/migration/courses.js"
   },
   "keywords": [
