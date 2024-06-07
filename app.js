@@ -1,5 +1,8 @@
 const express = require("express");
 const app = express();
+
+const customEnv = require("custom-env");
+customEnv.env();
 // const bodyParser = require("body-parser");
 
 const userRoute = require("./api/routes/user.js");

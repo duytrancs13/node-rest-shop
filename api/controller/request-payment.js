@@ -20,7 +20,7 @@ const createMomoTransaction = (price) =>
     var requestId = partnerCode + new Date().getTime();
     var orderId = requestId;
     var ipnUrl =
-      (redirectUrl = `${process.env.FE_BASE_URL}/ket-qua-thanh-toan`);
+      (redirectUrl = `${process.env.FE_URL}/ket-qua-thanh-toan`);
     var requestType = "captureWallet";
     var orderInfo = "Thanh toán qua cổng MoMo";
     var amount = price.toString();
