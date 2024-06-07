@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 module.exports = dbConnect = async () => {
-  await mongoose.connect(process.env.DB, { useNewUrlParser: true });
+  await mongoose.connect(process.env.DB);
 
   mongoose.connection.on("connected", () => console.log("Database connected"));
   mongoose.connection.on("error", (error) =>
