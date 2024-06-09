@@ -1,0 +1,27 @@
+@import "/src/utils/_variables";
+
+.card-my-course {
+  background: $white;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(5, 6, 24, 0.05);
+
+  display: flex;
+  width: 100%;
+
+  transition: 0.25s ease-out;
+  padding: 8px;
+  border: 1px solid transparent;
+
+  &:hover {
+    transform: translate(0, -16px);
+    cursor: pointer;
+    border: 1px solid $primary;
+  }
+
+  &__caption {
+    padding-left: 12px;
+    display: flex;
+    flex-direction: column;
+    grid-gap: 8px;
+  }
+}

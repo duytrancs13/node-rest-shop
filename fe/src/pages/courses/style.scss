@@ -1,0 +1,33 @@
+@import "/src/utils/_variables";
+
+.courses {
+  padding: 80px 16px;
+
+  @media (min-width: 769px) {
+    padding: 120px 0;
+  }
+
+  &__container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &__courses {
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-gap: 24px;
+
+      margin: 64px auto 36px;
+
+      @media (min-width: 577px) {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      @media (min-width: 1201px) {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        max-width: 1400px;
+      }
+    }
+  }
+}

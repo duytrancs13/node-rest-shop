@@ -1,0 +1,62 @@
+@import "/src/utils/_variables";
+
+.section-author {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  margin: 80px auto;
+
+  max-width: 500px;
+
+  @media (min-width: 769px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    max-width: 920px;
+    grid-gap: 32px;
+  }
+
+  &__avatar {
+    border-radius: 50%;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    grid-gap: 24px;
+    text-align: center;
+    padding: 24px;
+    @media (min-width: 769px) {
+      padding: 0;
+    }
+
+    @media (min-width: 769px) {
+      align-items: start;
+      text-align: left;
+    }
+
+    &__social {
+      display: flex;
+      align-items: center;
+      grid-gap: 16px;
+      li {
+        width: 40px;
+        height: 40px;
+        border: 1px solid $black;
+        border-radius: 50%;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        cursor: pointer;
+
+        &:hover {
+          opacity: 0.7;
+        }
+      }
+    }
+  }
+}

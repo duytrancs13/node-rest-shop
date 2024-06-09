@@ -1,0 +1,42 @@
+@import "/src/utils/_variables";
+
+.achieve {
+  margin: 120px auto 0;
+  max-width: 1200px;
+
+  &__container {
+    margin-top: 32px;
+
+    display: grid;
+    grid-gap: 32px;
+
+    grid-template-columns: 1fr;
+    @media (min-width: 993px) {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    &__item {
+      // border-radius: 8px;
+      // border: 1px solid $primary;
+      // padding: 32px;
+
+      margin: 0 auto;
+      max-width: 595px;
+
+      display: flex;
+      align-items: center;
+      justify-self: center;
+
+      grid-gap: 32px;
+      &__left {
+      }
+
+      &__right {
+        flex: 1;
+        &__title {
+          margin-bottom: 12px;
+        }
+      }
+    }
+  }
+}

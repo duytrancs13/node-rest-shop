@@ -1,0 +1,50 @@
+@import "/src/utils/_variables";
+
+.field-input {
+  display: flex;
+  flex-direction: column;
+
+  margin-bottom: 6px;
+
+  $root: &;
+
+  &--block {
+    width: 100%;
+  }
+
+  &__label {
+    font-size: 16px;
+    margin-top: 6px;
+    margin-bottom: 12px;
+  }
+
+  &__error-message {
+    margin-top: 4px;
+    min-height: 18px;
+  }
+
+  &__input {
+    margin: 0;
+
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 21px;
+
+    outline: 0;
+    padding: 12px 20px;
+    border: 1px solid $santas-gray;
+    border-radius: 3px;
+
+    &--is-invalid {
+      border: 1px solid $error;
+    }
+  }
+
+  &--invalid-form {
+    #{$root} {
+      &__input {
+        border: 1px solid $error;
+      }
+    }
+  }
+}

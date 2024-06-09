@@ -1,0 +1,33 @@
+@import "/src/utils/_variables";
+
+.form-outer {
+  max-width: 500px;
+
+  background-color: $white;
+  border-radius: 12px 12px 8px 8px;
+  -webkit-box-shadow: 0 10px 40px rgba(5, 6, 24, 0.05);
+  box-shadow: 0 10px 40px rgba(5, 6, 24, 0.05);
+
+  margin: 0 auto;
+  padding-top: 48px;
+
+  &__header {
+    text-align: center;
+  }
+
+  &__body {
+    padding: 24px;
+  }
+
+  &__footer {
+    padding: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: black;
+    border-radius: 0 0 8px 8px;
+    color: #f1f1f1;
+  }
+}

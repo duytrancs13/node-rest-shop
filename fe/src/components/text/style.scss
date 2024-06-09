@@ -1,0 +1,155 @@
+@import "/src/utils/_variables";
+
+.text {
+  // type
+  &--white {
+    color: $white;
+  }
+
+  &--primary {
+    color: $primary;
+  }
+
+  &--secondary {
+    color: $secondary;
+  }
+
+  &--link-primary {
+    color: $primary;
+    cursor: pointer;
+    &:hover {
+      color: $white;
+    }
+  }
+
+  &--error {
+    color: $error;
+  }
+
+  &--center {
+    text-align: center;
+  }
+
+  &--underline {
+    text-decoration-line: underline;
+  }
+
+  &--line-through {
+    text-decoration-line: line-through;
+  }
+
+  &--cursor {
+    cursor: pointer;
+  }
+
+  // size
+  &--sm {
+    font-size: 12px;
+    line-height: 121.642%;
+  }
+
+  &--md {
+    font-size: 16px;
+    line-height: 150%;
+  }
+
+  &--xlg-18 {
+    font-size: 16px;
+    line-height: 150%;
+
+    @media (min-width: 1132px) {
+      font-size: 18px;
+      line-height: 133.333%;
+    }
+  }
+
+  &--xlg-20 {
+    font-size: 20px;
+    line-height: normal;
+  }
+
+  &--xlg-22 {
+    font-size: 22px;
+    line-height: normal;
+  }
+
+  &--xlg-24 {
+    font-size: 24px;
+    line-height: 133.333%;
+  }
+
+  &--xlg-28 {
+    font-size: 28px;
+    line-height: normal;
+  }
+
+  &--xlg-32 {
+    font-size: 32px;
+    line-height: 119%;
+  }
+
+  &--xlg-36 {
+    font-size: 24px;
+    line-height: 133.333%;
+
+    @media (min-width: 1132px) {
+      font-size: 36px;
+    }
+  }
+
+  &--xlg-40 {
+    font-size: 40px;
+    line-height: 130%;
+  }
+
+  &--xlg-48 {
+    font-size: 28px;
+    line-height: normal;
+
+    @media (min-width: 1132px) {
+      font-size: 48px;
+      line-height: 116.667%;
+    }
+  }
+
+  &--xlg-52 {
+    font-size: 52px;
+    line-height: 134.615%;
+  }
+
+  &--xlg-56 {
+    font-size: 32px;
+
+    @media (min-width: 1132px) {
+      font-size: 56px;
+      line-height: normal;
+    }
+  }
+
+  &--xlg-60 {
+    font-size: 60px;
+    line-height: 130%;
+  }
+
+  &--xlg-72 {
+    font-size: 72px;
+    line-height: 134%;
+  }
+
+  &--strong {
+    font-weight: 200;
+    font-family: "Inter-SemiBold";
+  }
+
+  &--bold-600 {
+    font-weight: 600;
+  }
+
+  &--bold-700 {
+    font-weight: 700;
+  }
+
+  &--bold-800 {
+    font-weight: 800;
+  }
+}

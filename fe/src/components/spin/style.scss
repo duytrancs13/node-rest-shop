@@ -1,0 +1,62 @@
+@import "/src/utils/variables";
+
+.spin {
+  width: 24px;
+  height: 24px;
+
+  // loop
+  border: 4px solid #dbebff;
+  border-radius: 50%;
+  border-top: 4px solid $primary;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+
+  // center vertical and horizontal
+  /* position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); */
+
+  // center
+
+  &--small {
+    width: 20px;
+    height: 20px;
+
+    // loop
+    border: 2px solid #dbebff;
+    border-radius: 50%;
+    border-top: 2px solid $primary;
+    margin-top: 0;
+  }
+
+  &--x-small {
+    width: 14px;
+    height: 14px;
+
+    // loop
+    border: 2px solid #dbebff;
+    border-radius: 50%;
+    border-top: 2px solid $primary;
+    margin-top: 0;
+  }
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
