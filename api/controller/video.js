@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-exports.stream = async (request, response, next) => {
+exports.streamLocalFile = async (request, response, next) => {
   // Ensure there is a range given for the video
   const range = request.headers.range;
   if (!range) {
@@ -31,4 +31,51 @@ exports.stream = async (request, response, next) => {
 
   // Stream the video chunk to the client
   videoStream.pipe(response);
+};
+
+exports.streamUrl = async (request, response, next) => {
+  var fileUrl =
+    "https://firebasestorage.googleapis.com/v0/b/videostore-fc49a.appspot.com/o/438977143_1137762070602257_4752466063248295124_n.mp4?alt=media&token=93b9b1ff-6535-487c-994b-a34a67e5208a";
+
+  var range = req.headers.range;
+  var positions, start, end, total, chunksize;
+
+  // HEAD request for file metadata
+  request(
+    {
+      url: fileUrl,
+      method: "HEAD",
+    },
+    function (error, response, body) {
+      setResponseHeaders(response.headers);
+      pipeToResponse();
+    }
+  );
+
+  function setResponseHeaders(headers) {
+    positions = range.replace(/bytes=/, "").split("-");
+    start = parseInt(positions[0], 10);
+    total = headers["content-length"];
+    end = positions[1] ? parseInt(positions[1], 10) : total - 1;
+    chunksize = end - start + 1;
+
+    res.writeHead(206, {
+      "Content-Range": "bytes " + start + "-" + end + "/" + total,
+      "Accept-Ranges": "bytes",
+      "Content-Length": chunksize,
+      "Content-Type": "video/mp4",
+    });
+  }
+
+  function pipeToResponse() {
+    var options = {
+      url: fileUrl,
+      headers: {
+        range: "bytes=" + start + "-" + end,
+        connection: "keep-alive",
+      },
+    };
+
+    request(options).pipe(res);
+  }
 };
