@@ -7,16 +7,16 @@ const https = require("https");
 const crypto = require("crypto");
 
 const baseOptions = {
-  hostname: "test-payment.momo.vn",
-  port: 443,
+  hostname: process.env.MOMO_HOST_NAME,
+  port: process.env.MOMO_PORT,
 };
 
-var accessKey = "NJ5sQyRQD54lurxH";
-var secretKey = "gZn6sSi6Uw605rodeyfVJwoGHGRNU7X9";
+var accessKey = process.env.MOMO_ACCESS_KEY;
+var secretKey = process.env.MOMO_SECRET_KEY;
+var partnerCode = process.env.MOMO_PARTNER_CODE;
 
 const createMomoTransaction = (price) =>
   new Promise(async (resolve, reject) => {
-    var partnerCode = "MOMOCKJ020230627";
     var requestId = partnerCode + new Date().getTime();
     var orderId = requestId;
     var ipnUrl =
