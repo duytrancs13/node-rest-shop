@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 
-const { STATUS, MESSAGE } = require("../constant/response");
+const { STATUS, MESSAGE, ROLE } = require("../constant/response");
 const generateToken = require("../utils/generate-token");
 
 const {
