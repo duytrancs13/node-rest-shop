@@ -1,4 +1,5 @@
 const fs = require("fs");
+const request = require('request');
 
 exports.streamLocalFile = async (request, response, next) => {
   // Ensure there is a range given for the video
@@ -33,7 +34,8 @@ exports.streamLocalFile = async (request, response, next) => {
   videoStream.pipe(response);
 };
 
-exports.streamUrl = async (request, response, next) => {
+exports.streamUrl = async (req, res, next) => {
+  console.log("streamUrl");
   var fileUrl =
     "https://firebasestorage.googleapis.com/v0/b/videostore-fc49a.appspot.com/o/438977143_1137762070602257_4752466063248295124_n.mp4?alt=media&token=93b9b1ff-6535-487c-994b-a34a67e5208a";
 
@@ -43,7 +45,7 @@ exports.streamUrl = async (request, response, next) => {
   // HEAD request for file metadata
   request(
     {
-      url: fileUrl,
+      url: fileUrl, 
       method: "HEAD",
     },
     function (error, response, body) {
