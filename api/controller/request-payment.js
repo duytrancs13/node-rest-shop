@@ -19,8 +19,7 @@ const createMomoTransaction = (price) =>
   new Promise(async (resolve, reject) => {
     var requestId = partnerCode + new Date().getTime();
     var orderId = requestId;
-    var ipnUrl =
-      (redirectUrl = `${process.env.FE_URL}/ket-qua-thanh-toan`);
+    var ipnUrl = (redirectUrl = `${process.env.FE_URL}/ket-qua-thanh-toan`);
     var requestType = "captureWallet";
     var orderInfo = "Thanh toán qua cổng MoMo";
     var amount = price.toString();
@@ -225,6 +224,7 @@ exports.resultPayment = async (request, response, next) => {
     const momoPaymentTransaction = await MomoPaymentTransaction.findOne({
       userId,
     });
+
     const newMomoPaymentTransaction = {
       userId,
       transaction: {
@@ -240,39 +240,38 @@ exports.resultPayment = async (request, response, next) => {
         lastUpdated: checkStatusMomoTransactionResp.lastUpdated,
       },
     };
+
     if (!momoPaymentTransaction) {
       await new MomoPaymentTransaction(newMomoPaymentTransaction).save();
-    }
-
-    if (
-      momoPaymentTransaction.transaction?.find(
-        ({ transId }) => transId.toString() === checkStatusMomoTransactionResp.transId.toString()
+    } else if (
+      momoPaymentTransaction?.transaction?.find(
+        ({ transId }) =>
+          transId.toString() ===
+          checkStatusMomoTransactionResp.transId.toString()
       )
     ) {
       return response.status(STATUS.SUCCESS).json({
-        error_code: MESSAGE.SUCCESS.code, 
+        error_code: MESSAGE.SUCCESS.code,
         message: MESSAGE.SUCCESS.message,
         data: "",
       });
+    } else {
+      const updateOps = {
+        transaction: [
+          ...momoPaymentTransaction.transaction,
+          newMomoPaymentTransaction.transaction,
+        ],
+      };
+      // ADD MORE
+      await MomoPaymentTransaction.findOneAndUpdate(
+        { userId },
+        { $set: updateOps }
+      );
     }
-
-    const updateOps = {
-      transaction: [
-        ...momoPaymentTransaction.transaction,
-        newMomoPaymentTransaction.transaction,
-      ],
-    };
-    // ADD MORE
-    await MomoPaymentTransaction.findOneAndUpdate(
-      { userId },
-      { $set: updateOps }
-    );
-
     // Upgrade service
     request.coursesFromPayment = momoTransaction.courses;
     next();
   } catch (error) {
-    console.log("checkStatusMomoTransactionResp error: ", error);
     response.status(STATUS.ERROR).json({
       error_code: MESSAGE.MOMO_ERROR.code,
       message: MESSAGE.MOMO_ERROR.message,
