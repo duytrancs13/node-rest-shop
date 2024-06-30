@@ -119,11 +119,20 @@ const checkStatusMomoTransaction = (bill) =>
 
 exports.requestPayment = async (request, response, next) => {
   const userId = request.decodedToken._id;
-  const price = request.body.price;
+  const totalPrice = request.totalPrice;
+  const coursesBody = request.body.courses;
+
+  if (!totalPrice || !coursesBody.length) {
+    return response.status(STATUS.SUCCESS).json({
+      error_code: MESSAGE.INVALID_INPUT.code,
+      message: MESSAGE.INVALID_INPUT.message,
+      data: "",
+    });
+  }
 
   try {
     const createMomoTransactionResp = await createMomoTransaction(
-      price.toString()
+      totalPrice.toString()
     );
 
     if (createMomoTransactionResp?.resultCode !== MESSAGE.SUCCESS.code) {
@@ -139,18 +148,24 @@ exports.requestPayment = async (request, response, next) => {
       });
     }
 
+    const coursesInfo = coursesBody.map((c) => ({
+      courseId: c.id,
+      name: c.name,
+      price: c.price,
+    }));
+
     // store transaction ID
     const momoTransaction = await MomoTransaction.findOne({ userId });
     if (!momoTransaction) {
       await new MomoTransaction({
         userId,
         transactionId: createMomoTransactionResp.requestId,
-        courses: request.body.courses,
+        courses: coursesInfo,
       }).save();
     } else {
       const updateOps = {
         transactionId: createMomoTransactionResp.requestId,
-        courses: request.body.courses,
+        courses: coursesInfo,
       };
 
       // ADD MORE
@@ -229,16 +244,24 @@ exports.resultPayment = async (request, response, next) => {
       userId,
       transaction: {
         courses: momoTransaction.courses,
+        amount: +checkStatusMomoTransactionResp.amount,
+
         partnerCode: checkStatusMomoTransactionResp.partnerCode,
         orderId: checkStatusMomoTransactionResp.orderId,
         requestId: checkStatusMomoTransactionResp.requestId,
         extraData: checkStatusMomoTransactionResp.extraData,
-        amount: +checkStatusMomoTransactionResp.amount,
         transId: checkStatusMomoTransactionResp.transId,
         payType: checkStatusMomoTransactionResp.payType,
         responseTime: checkStatusMomoTransactionResp.responseTime,
         lastUpdated: checkStatusMomoTransactionResp.lastUpdated,
       },
+    };
+
+    let receiptInfo = {
+      totalPrice: +checkStatusMomoTransactionResp.amount,
+      courses: momoTransaction.courses,
+      createdTime: checkStatusMomoTransactionResp.lastUpdated,
+      transactionId: checkStatusMomoTransactionResp.transId,
     };
 
     if (!momoPaymentTransaction) {
@@ -253,7 +276,7 @@ exports.resultPayment = async (request, response, next) => {
       return response.status(STATUS.SUCCESS).json({
         error_code: MESSAGE.SUCCESS.code,
         message: MESSAGE.SUCCESS.message,
-        data: "",
+        data: receiptInfo,
       });
     } else {
       const updateOps = {
@@ -269,7 +292,8 @@ exports.resultPayment = async (request, response, next) => {
       );
     }
     // Upgrade service
-    request.coursesFromPayment = momoTransaction.courses;
+    request.receiptInfo = receiptInfo;
+
     next();
   } catch (error) {
     response.status(STATUS.ERROR).json({

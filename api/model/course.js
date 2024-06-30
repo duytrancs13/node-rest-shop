@@ -7,11 +7,7 @@ const schema = new Schema({
     type: Schema.Types.ObjectId,
     required: true,
   },
-  imagePath: {
-    type: String,
-    required: true,
-  },
-  level: {
+  thumb: {
     type: String,
     required: true,
   },

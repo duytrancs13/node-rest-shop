@@ -11,10 +11,22 @@ const schema = new Schema({
     type: String,
     required: true,
   },
-  courses: {
-    type: Schema.Types.Array,
-    required: true,
-  },
+  courses: [
+    {
+      courseId: {
+        type: String,
+        required: true,
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+      price: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
 });
 
 const MomoTransaction = mongoose.model(

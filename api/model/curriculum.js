@@ -3,10 +3,6 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const schema = new Schema({
-  _id: {
-    type: Schema.Types.ObjectId,
-    required: true,
-  },
   courseId: {
     type: String,
     required: true,
@@ -15,7 +11,17 @@ const schema = new Schema({
     type: String,
     required: true,
   },
-  slide: {
+  introduceVideo: {
+    embedCodeSrc: {
+      type: String,
+      required: true
+    },
+    title: {
+      type: String,
+      required: true
+    },
+  },
+  downloadSlideLink: {
     type: String,
     required: true,
   },
@@ -31,7 +37,7 @@ const schema = new Schema({
             type: String,
             required: true,
           },
-          linkUrl: {
+          sessionLink: {
             type: String,
             required: true,
           },

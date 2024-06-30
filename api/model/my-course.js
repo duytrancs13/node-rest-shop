@@ -7,10 +7,12 @@ const schema = new Schema({
     type: Schema.Types.ObjectId,
     required: true,
   },
-  courses: {
-    type: Schema.Types.Array,
-    default: [],
-  },
+
+  courses: [
+    {
+      type: [String],
+    },
+  ],
 });
 
 const MyCourse = mongoose.model("MyCourse", schema, "myCourse");

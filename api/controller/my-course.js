@@ -28,18 +28,16 @@ exports.getMyCourse = async (request, response, next) => {
 };
 
 exports.addToMyCourse = async (request, response, next) => {
-  const courses = request.coursesFromPayment || [];
+  const receiptInfo = request.receiptInfo;
+  const courses = receiptInfo.courses?.map((c) => c.courseId) || [];
   try {
     if (courses.length) {
       const userId = request.decodedToken._id;
 
       // UPDATE CART
-      const cart = await Cart.findOne({ userId });
-      const finalCourses = cart.courses.filter(
-        (course) => !courses.includes(course._id.toString())
-      );
+      // reset => 0 course in cart
       const updateCoursesInCart = {
-        courses: finalCourses,
+        courses: [],
       };
       await Cart.findOneAndUpdate({ userId }, { $set: updateCoursesInCart });
 
@@ -54,7 +52,7 @@ exports.addToMyCourse = async (request, response, next) => {
         return response.status(STATUS.SUCCESS).json({
           error_code: MESSAGE.SUCCESS.code,
           message: MESSAGE.SUCCESS.message,
-          data: courses,
+          data: receiptInfo,
         });
       }
 
@@ -68,7 +66,7 @@ exports.addToMyCourse = async (request, response, next) => {
       return response.status(STATUS.SUCCESS).json({
         error_code: MESSAGE.SUCCESS.code,
         message: MESSAGE.SUCCESS.message,
-        data: "",
+        data: receiptInfo,
       });
     }
   } catch (error) {

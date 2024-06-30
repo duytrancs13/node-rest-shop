@@ -9,11 +9,22 @@ const schema = new Schema({
   },
   transaction: [
     {
-      courses: {
-        type: Schema.Types.Array,
-        default: [],
-      },
-
+      courses: [
+        {
+          courseId: {
+            type: String,
+            required: true,
+          },
+          name: {
+            type: String,
+            required: true,
+          },
+          price: {
+            type: Number,
+            required: true,
+          },
+        },
+      ],
       partnerCode: {
         type: String,
         required: true,
