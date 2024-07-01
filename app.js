@@ -11,6 +11,7 @@ const cartRoute = require("./api/routes/cart.js");
 const requestPaymentRoute = require("./api/routes/request-payment.js");
 const resultPaymentRoute = require("./api/routes/result-payment.js");
 const myCourseRoute = require("./api/routes/my-course.js");
+const historyPaymentRoute = require("./api/routes/history-payment.js");
 const curriculumRoute = require("./api/routes/curriculum.js");
 const videoRoute = require("./api/routes/video.js");
 
@@ -50,6 +51,7 @@ app.use("/api/cart", cartRoute);
 app.use("/api/request-payment", requestPaymentRoute);
 app.use("/api/result-payment", resultPaymentRoute);
 app.use("/api/my-course", myCourseRoute);
+app.use("/api/history-payment", historyPaymentRoute);
 app.use("/api/curriculum", curriculumRoute);
 app.use("/api/video", videoRoute);
 app.use("/api", userRoute);

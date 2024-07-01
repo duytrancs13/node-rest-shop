@@ -120,9 +120,9 @@ const checkStatusMomoTransaction = (bill) =>
 exports.requestPayment = async (request, response, next) => {
   const userId = request.decodedToken._id;
   const totalPrice = request.totalPrice;
-  const coursesBody = request.body.courses;
+  const coursesInCart = request.coursesInCart;
 
-  if (!totalPrice || !coursesBody.length) {
+  if (!totalPrice || !coursesInCart.length) {
     return response.status(STATUS.SUCCESS).json({
       error_code: MESSAGE.INVALID_INPUT.code,
       message: MESSAGE.INVALID_INPUT.message,
@@ -148,9 +148,10 @@ exports.requestPayment = async (request, response, next) => {
       });
     }
 
-    const coursesInfo = coursesBody.map((c) => ({
-      courseId: c.id,
-      name: c.name,
+    const coursesInfo = coursesInCart.map((c) => ({
+      courseId: c._id,
+      thumb: c.thumb,
+      title: c.title,
       price: c.price,
     }));
 
@@ -262,6 +263,7 @@ exports.resultPayment = async (request, response, next) => {
       courses: momoTransaction.courses,
       createdTime: checkStatusMomoTransactionResp.lastUpdated,
       transactionId: checkStatusMomoTransactionResp.transId,
+      paymentMethod: "MOMO",
     };
 
     if (!momoPaymentTransaction) {

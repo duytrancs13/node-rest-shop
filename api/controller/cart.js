@@ -202,9 +202,8 @@ exports.verifyCart = async (request, response, next) => {
   }
 
   const myCourse = await MyCourse.findOne({ userId });
-
   // Check valid courses
-  courses.forEach(async ({ id : courseId }) => {
+  courses.forEach(async (courseId) => {
     const course = mongoose.Types.ObjectId.isValid(courseId)
       ? await Course.findById(courseId)
       : null;
@@ -235,6 +234,7 @@ exports.verifyCart = async (request, response, next) => {
       });
     }
     request.totalPrice = coursesInCart.reduce((total, c) => total + c.price, 0);
+    request.coursesInCart = coursesInCart;
     next();
   });
 };
