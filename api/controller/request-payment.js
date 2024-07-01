@@ -179,7 +179,6 @@ exports.requestPayment = async (request, response, next) => {
       data: createMomoTransactionResp.payUrl,
     });
   } catch (error) {
-    console.log("createMomoTransactionResp error: ", error);
     response.status(STATUS.ERROR).json({
       error_code: MESSAGE.MOMO_ERROR.code,
       message: MESSAGE.MOMO_ERROR.message,
@@ -243,7 +242,7 @@ exports.resultPayment = async (request, response, next) => {
 
     const newMomoPaymentTransaction = {
       userId,
-      transaction: {
+      transaction: [{
         courses: momoTransaction.courses,
         amount: +checkStatusMomoTransactionResp.amount,
 
@@ -255,7 +254,7 @@ exports.resultPayment = async (request, response, next) => {
         payType: checkStatusMomoTransactionResp.payType,
         responseTime: checkStatusMomoTransactionResp.responseTime,
         lastUpdated: checkStatusMomoTransactionResp.lastUpdated,
-      },
+      }],
     };
 
     let receiptInfo = {
@@ -283,8 +282,8 @@ exports.resultPayment = async (request, response, next) => {
     } else {
       const updateOps = {
         transaction: [
-          ...momoPaymentTransaction.transaction,
-          newMomoPaymentTransaction.transaction,
+          ...(momoPaymentTransaction.transaction || []),
+          ...newMomoPaymentTransaction.transaction,
         ],
       };
       // ADD MORE

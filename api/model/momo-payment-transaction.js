@@ -15,7 +15,11 @@ const schema = new Schema({
             type: String,
             required: true,
           },
-          name: {
+          thumb: {
+            type: String,
+            required: true,
+          },
+          title: {
             type: String,
             required: true,
           },

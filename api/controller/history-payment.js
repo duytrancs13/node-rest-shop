@@ -12,17 +12,15 @@ exports.getHistoryPayment = async (request, response, next) => {
     return response.status(STATUS.SUCCESS).json({
       error_code: MESSAGE.SUCCESS.code,
       message: MESSAGE.SUCCESS.message,
-      data: {
-        courses: momoPaymentTransaction
-          ? momoPaymentTransaction.transaction.map((t) => ({
-              transactionId: t.transId,
-              courses: t.courses,
-              totalPrice: t.amount,
-              createdTime: t.lastUpdated,
-              paymentMethod: t.paymentMethod,
-            }))
-          : [],
-      },
+      data: momoPaymentTransaction
+        ? momoPaymentTransaction.transaction.map((t) => ({
+            transactionId: t.transId,
+            courses: t.courses,
+            totalPrice: t.amount,
+            createdTime: t.lastUpdated,
+            paymentMethod: t.paymentMethod,
+          }))
+        : [],
     });
   } catch (error) {
     response.status(STATUS.ERROR).json({
